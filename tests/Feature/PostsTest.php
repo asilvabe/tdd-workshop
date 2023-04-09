@@ -15,4 +15,12 @@ class PostsTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    /** @test */
+    public function posts_list_must_show_a_title(): void
+    {
+        $response = $this->get('/posts');
+
+        $response->assertSee('Posts list');
+    }
 }

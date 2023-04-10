@@ -10,6 +10,11 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'content',
+    ];
+
     public function scopeApproved(Builder $query): Builder
     {
         return $query->whereNotNull('approved_at');

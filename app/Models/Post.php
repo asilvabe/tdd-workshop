@@ -15,6 +15,11 @@ class Post extends Model
         'content',
     ];
 
+    public function isApproved(): bool
+    {
+        return ! is_null($this->approved_at);
+    }
+
     public function scopeApproved(Builder $query): Builder
     {
         return $query->whereNotNull('approved_at');

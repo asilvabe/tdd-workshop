@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Posts;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use JsonException;
 use Tests\TestCase;
 
 class PostsCreateTest extends TestCase
@@ -26,7 +28,10 @@ class PostsCreateTest extends TestCase
             ->assertViewIs('posts.create');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @throws JsonException
+     */
     public function authenticated_users_can_create_posts(): void
     {
         $data = [
@@ -40,6 +45,7 @@ class PostsCreateTest extends TestCase
 
         $this
             ->post('/posts', $data)
+            ->assertSessionHasNoErrors()
             ->assertRedirect();
 
         $this->assertDatabaseHas('posts', $data);
@@ -55,7 +61,25 @@ class PostsCreateTest extends TestCase
 
         $this
             ->post('/posts', $invalidData)
-            ->assertSessionHasErrors([$attribute]);
+            ->assertInvalid([$attribute]);
+    }
+
+    /** @test */
+    public function recent_created_post_must_to_be_unapproved_by_default(): void
+    {
+        $data = [
+            'title' => 'My first post',
+            'content' => 'This is my first post',
+        ];
+
+        $this->actingAs(User::factory()->create());
+
+        $this->post('/posts', $data);
+
+        $post = Post::first();
+
+        $this->assertNull($post->approved_at);
+        $this->assertFalse($post->isApproved());
     }
 
     public function postsDataprovider(): array

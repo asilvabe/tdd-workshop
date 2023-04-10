@@ -43,4 +43,20 @@ class PostsCreateTest extends TestCase
 
         $this->assertDatabaseHas('posts', $data);
     }
+
+    /** @test */
+    public function title_is_required(): void
+    {
+        $data = [
+            'content' => 'This is my first post',
+        ];
+
+        $this->actingAs(User::factory()->create());
+
+        $this
+            ->post('/posts', $data)
+            ->assertInvalid(['title' => 'required']);
+
+        $this->assertDatabaseMissing('posts', $data);
+    }
 }

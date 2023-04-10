@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Post;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
 class PostsTest extends TestCase
@@ -34,7 +35,19 @@ class PostsTest extends TestCase
         $response = $this->get('/posts');
 
         $response
+            ->assertViewHas('posts')
             ->assertSee($post->title)
             ->assertSee($post->created_at->format('d/m/Y'));
+    }
+
+    /** @test */
+    public function posts_list_must_be_paginated(): void
+    {
+        Post::factory()->count(50)->create();
+
+        $response = $this->get('/posts');
+
+        $this->assertInstanceOf(LengthAwarePaginator::class, $response->viewData('posts'));
+        $this->assertEquals(10, $response->viewData('posts')->perPage());
     }
 }

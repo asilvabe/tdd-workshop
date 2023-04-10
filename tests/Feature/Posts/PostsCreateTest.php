@@ -13,6 +13,10 @@ class PostsCreateTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_see_the_create_post_form(): void
     {
+        $this
+            ->get('/posts/create')
+            ->assertRedirect('/login');
+
         $this->actingAs(User::factory()->create());
 
         $this
@@ -21,10 +25,21 @@ class PostsCreateTest extends TestCase
     }
 
     /** @test */
-    public function guest_users_can_not_see_the_create_post_form(): void
+    public function authenticated_users_can_create_posts(): void
     {
+        $data = [
+            'title' => 'My first post',
+            'content' => 'This is my first post',
+        ];
+
+        $this->post('/posts', $data)->assertRedirect('/login');
+
+        $this->actingAs(User::factory()->create());
+
         $this
-            ->get('/posts/create')
-            ->assertRedirect('/login');
+            ->post('/posts', $data)
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('posts', $data);
     }
 }

@@ -85,7 +85,7 @@ class PostsCreateTest extends TestCase
     public function postsDataprovider(): array
     {
         return [
-            'title is requied' => [
+            'title is required' => [
                 'title',
                 [
                     'content' => 'This is my first post',

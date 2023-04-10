@@ -13,12 +13,10 @@ class PostsCreateTest extends TestCase
     /** @test */
     public function an_authenticated_user_can_see_the_create_post_form(): void
     {
-        $user = User::factory()->create();
+        $this->actingAs(User::factory()->create());
 
-        $this->actingAs($user);
-
-        $response = $this->get('/posts/create');
-
-        $response->assertOk();
+        $this
+            ->get('/posts/create')
+            ->assertOk();
     }
 }

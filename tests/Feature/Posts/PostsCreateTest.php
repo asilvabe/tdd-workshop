@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Posts;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,5 +18,13 @@ class PostsCreateTest extends TestCase
         $this
             ->get('/posts/create')
             ->assertOk();
+    }
+
+    /** @test */
+    public function guest_users_can_not_see_the_create_post_form(): void
+    {
+        $this
+            ->get('/posts/create')
+            ->assertRedirect('/login');
     }
 }

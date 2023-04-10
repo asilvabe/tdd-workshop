@@ -5,8 +5,9 @@ namespace Tests\Feature;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use JsonException;
 use Tests\TestCase;
 
 class PostsCreateTest extends TestCase
@@ -108,6 +109,71 @@ class PostsCreateTest extends TestCase
             ->expectsOutput('Creating a new post...')
             ->expectsOutput('Error creating the post: The given data was invalid.')
             ->assertExitCode(1);
+    }
+
+    /** @test */
+    public function it_can_store_an_image_when_storing_a_post(): void
+    {
+        Storage::fake('posts');
+
+        $file = UploadedFile::fake()->image('cover.jpeg');
+
+        $data = [
+            'title' => 'My first post',
+            'content' => 'This is my first post',
+            'image' => $file,
+        ];
+
+        $this->actingAs(User::factory()->create());
+
+        $this->post('/posts', $data);
+
+        $this->assertDatabaseHas('posts', [
+            'title' => 'My first post',
+            'content' => 'This is my first post',
+            'image_path' => $file->hashName(),
+        ]);
+
+        Storage::disk('posts')->assertExists($file->hashName());
+    }
+
+    /**
+     * @test
+     * @dataProvider invalidImagesDataProvider
+     */
+    public function cannot_store_an_image_due_invalid_file(mixed $file): void
+    {
+        Storage::fake();
+
+        $data = [
+            'title' => 'My first post',
+            'content' => 'This is my first post',
+            'image' => $file,
+        ];
+
+        $this->actingAs(User::factory()->create());
+
+        $this->post('/posts', $data)->assertInvalid(['image']);
+
+        $this->assertDatabaseMissing('posts', [
+            'title' => 'My first post',
+            'content' => 'This is my first post',
+            'image_path' => "posts-images/{$file->hashName()}",
+        ]);
+
+        Storage::assertMissing("posts-images/{$file->hashName()}");
+    }
+
+    public function invalidImagesDataProvider(): array
+    {
+        return [
+            'invalid extension' => [
+                UploadedFile::fake()->create('document.pdf', 1024),
+            ],
+            'invalid size' => [
+                UploadedFile::fake()->image('cover.jpeg')->size(2048),
+            ],
+        ];
     }
 
     public function postsDataprovider(): array

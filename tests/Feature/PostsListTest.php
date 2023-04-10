@@ -14,17 +14,17 @@ class PostsListTest extends TestCase
     /** @test */
     public function an_user_can_see_the_posts_list(): void
     {
-        $response = $this->get('/posts');
-
-        $response->assertOk();
+        $this
+            ->get('/posts')
+            ->assertOk();
     }
 
     /** @test */
     public function posts_list_must_show_a_title(): void
     {
-        $response = $this->get('/posts');
-
-        $response->assertSee('Posts list');
+        $this
+            ->get('/posts')
+            ->assertSee('Posts list');
     }
 
     /** @test */
@@ -48,9 +48,8 @@ class PostsListTest extends TestCase
     {
         $post = Post::factory()->create();
 
-        $response = $this->get('/posts');
-
-        $response
+        $this
+            ->get('/posts')
             ->assertViewHas('posts')
             ->assertSee($post->title)
             ->assertSee($post->created_at->format('d/m/Y'));

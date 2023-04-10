@@ -16,7 +16,7 @@ class PostsListTest extends TestCase
     {
         $response = $this->get('/posts');
 
-        $response->assertStatus(200);
+        $response->assertOk();
     }
 
     /** @test */

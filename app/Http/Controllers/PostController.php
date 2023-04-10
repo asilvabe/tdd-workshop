@@ -13,4 +13,9 @@ class PostController extends Controller
             'posts' => Post::approved()->orderByDesc('created_at')->paginate(10),
         ]);
     }
+
+    public function create(): View
+    {
+        return view('posts.create');
+    }
 }

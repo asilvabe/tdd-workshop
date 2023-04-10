@@ -49,26 +49,58 @@ class PostsCreateTest extends TestCase
      * @test
      * @dataProvider postsDataprovider
      */
-    public function a_post_can_not_be_created_due_validation_errors(mixed $invalidTitle): void
+    public function a_post_can_not_be_created_due_validation_errors(string $attribute, array $invalidData): void
     {
-        $data = [
-            'title' => $invalidTitle,
-            'content' => 'This is my first post',
-        ];
-
         $this->actingAs(User::factory()->create());
 
         $this
-            ->post('/posts', $data)
-            ->assertSessionHasErrors(['title']);
+            ->post('/posts', $invalidData)
+            ->assertSessionHasErrors([$attribute]);
     }
 
     public function postsDataprovider(): array
     {
         return [
-            'title is requied' => [null],
-            'title must to be string' => [123],
-            'title must to hace until 100 characters' => [Str::random(101)],
+            'title is requied' => [
+                'title',
+                [
+                    'content' => 'This is my first post',
+                ],
+            ],
+            'title must to be string' => [
+                'title',
+                [
+                    'title' => 123,
+                    'content' => 'This is my first post',
+                ]
+            ],
+            'title must to hace until 100 characters' => [
+                'title',
+                [
+                    'title' => Str::random(101),
+                    'content' => 'This is my first post',
+                ]
+            ],
+            'content is requied' => [
+                'content',
+                [
+                    'title' => 'My first post',
+                ],
+            ],
+            'content must to be string' => [
+                'content',
+                [
+                    'title' => 'My first post',
+                    'content' => 123,
+                ]
+            ],
+            'content must to hace until 100 characters' => [
+                'content',
+                [
+                    'title' => 'My first post',
+                    'content' => Str::random(1001),
+                ]
+            ],
         ];
     }
 }

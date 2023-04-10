@@ -65,4 +65,20 @@ class PostsListTest extends TestCase
         $this->assertInstanceOf(LengthAwarePaginator::class, $response->viewData('posts'));
         $this->assertEquals(10, $response->viewData('posts')->perPage());
     }
+
+    /** @test */
+    public function posts_list_must_be_ordered_by_creation_date_desc(): void
+    {
+        $firstPost = Post::factory()->create(['created_at' => now()->subDays(2)]);
+        $secondPost = Post::factory()->create(['created_at' => now()->subDay()]);
+        $thirdPost = Post::factory()->create(['created_at' => now()]);
+
+        $this
+            ->get('/posts')
+            ->assertSeeTextInOrder([
+                $thirdPost->title,
+                $secondPost->title,
+                $firstPost->title,
+            ]);
+    }
 }

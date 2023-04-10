@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Tests\TestCase;
 
-class PostsTest extends TestCase
+class PostsListTest extends TestCase
 {
     use RefreshDatabase;
 

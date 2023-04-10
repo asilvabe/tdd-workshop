@@ -46,7 +46,7 @@ class PostsListTest extends TestCase
     /** @test */
     public function posts_list_must_show_the_posts_title_and_the_creation_date(): void
     {
-        $post = Post::factory()->create();
+        $post = Post::factory()->approved()->create();
 
         $this
             ->get('/posts')
@@ -69,9 +69,9 @@ class PostsListTest extends TestCase
     /** @test */
     public function posts_list_must_be_ordered_by_creation_date_desc(): void
     {
-        $firstPost = Post::factory()->create(['created_at' => now()->subDays(2)]);
-        $secondPost = Post::factory()->create(['created_at' => now()->subDay()]);
-        $thirdPost = Post::factory()->create(['created_at' => now()]);
+        $firstPost = Post::factory()->approved()->create(['created_at' => now()->subDays(2)]);
+        $secondPost = Post::factory()->approved()->create(['created_at' => now()->subDay()]);
+        $thirdPost = Post::factory()->approved()->create(['created_at' => now()]);
 
         $this
             ->get('/posts')

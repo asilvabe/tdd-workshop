@@ -26,5 +26,6 @@ Route::prefix('posts')->name('posts.')->group(function () {
     Route::middleware(['auth'])->group(function () {
         Route::get('create', [PostController::class, 'create'])->name('create');
         Route::post('/', [PostController::class, 'store'])->name('store');
+        Route::put('{post}/approve', [PostController::class, 'approve'])->name('approve');
     });
 });

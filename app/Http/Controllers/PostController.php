@@ -28,4 +28,15 @@ class PostController extends Controller
 
         return to_route('posts.index')->with('success', 'Post created successfully!');
     }
+
+    public function approve(Post $post): RedirectResponse
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $post->approve();
+
+        return to_route('posts.index')->with('success', 'Post approved successfully!');
+    }
 }

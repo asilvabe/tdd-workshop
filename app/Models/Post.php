@@ -10,6 +10,13 @@ class Post extends Model
 {
     use HasFactory;
 
+    public function approve(): void
+    {
+        $this->approved_at = now();
+
+        $this->save();
+    }
+
     public function isApproved(): bool
     {
         return ! is_null($this->approved_at);

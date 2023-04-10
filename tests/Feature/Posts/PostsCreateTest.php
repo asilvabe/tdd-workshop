@@ -21,7 +21,8 @@ class PostsCreateTest extends TestCase
 
         $this
             ->get('/posts/create')
-            ->assertOk();
+            ->assertOk()
+            ->assertViewIs('posts.create');
     }
 
     /** @test */

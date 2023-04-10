@@ -81,4 +81,17 @@ class PostsListTest extends TestCase
                 $firstPost->title,
             ]);
     }
+
+    /** @test */
+    public function only_approved_posts_must_be_showed(): void
+    {
+        Post::factory()->approved()->count(5)->create();
+
+        $unapprovedPost = Post::factory()->unapproved()->create();
+
+        $response = $this->get('/posts');
+
+        $this->assertCount(5, $response->viewData('posts'));
+        $response->assertDontSee($unapprovedPost->title);
+    }
 }

@@ -28,6 +28,22 @@ class PostsListTest extends TestCase
     }
 
     /** @test */
+    public function the_title_must_be_translated(): void
+    {
+        app()->setLocale('es');
+
+        $this
+            ->get('/posts')
+            ->assertSee('Listado de publicaciones');
+
+        app()->setLocale('en');
+
+        $this
+            ->get('/posts')
+            ->assertSee('Posts list');
+    }
+
+    /** @test */
     public function posts_list_must_show_the_posts_title_and_the_creation_date(): void
     {
         $post = Post::factory()->create();

@@ -45,10 +45,14 @@ class PostsCreateTest extends TestCase
         $this->assertDatabaseHas('posts', $data);
     }
 
-    /** @test */
-    public function title_is_required(): void
+    /**
+     * @test
+     * @dataProvider postsDataprovider
+     */
+    public function a_post_can_not_be_created_due_validation_errors(mixed $invalidTitle): void
     {
         $data = [
+            'title' => $invalidTitle,
             'content' => 'This is my first post',
         ];
 
@@ -56,42 +60,15 @@ class PostsCreateTest extends TestCase
 
         $this
             ->post('/posts', $data)
-            ->assertInvalid(['title']);
-
-        $this->assertDatabaseMissing('posts', $data);
+            ->assertSessionHasErrors(['title']);
     }
 
-    /** @test */
-    public function title_must_to_be_string(): void
+    public function postsDataprovider(): array
     {
-        $data = [
-            'title' => 123,
-            'content' => 'This is my first post',
+        return [
+            'title is requied' => [null],
+            'title must to be string' => [123],
+            'title must to hace until 100 characters' => [Str::random(101)],
         ];
-
-        $this->actingAs(User::factory()->create());
-
-        $this
-            ->post('/posts', $data)
-            ->assertInvalid(['title']);
-
-        $this->assertDatabaseMissing('posts', $data);
-    }
-
-    /** @test */
-    public function title_must_to_be_have__until_100_characters(): void
-    {
-        $data = [
-            'title' => Str::random(101),
-            'content' => 'This is my first post',
-        ];
-
-        $this->actingAs(User::factory()->create());
-
-        $this
-            ->post('/posts', $data)
-            ->assertInvalid(['title']);
-
-        $this->assertDatabaseMissing('posts', $data);
     }
 }

@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('title', 100);
             $table->text('content');
+            $table->string('image_path')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });

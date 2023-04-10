@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\Post;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 
 class StorePostAction
@@ -17,6 +18,7 @@ class StorePostAction
 
         $post->title = $data['title'];
         $post->content = $data['content'];
+        $post->image_path = self::storeImage($data);
 
         try {
             $post->save();
@@ -40,5 +42,14 @@ class StorePostAction
         ) {
             throw new InvalidArgumentException('The given data was invalid.');
         }
+    }
+
+    private static function storeImage(array $data): ?string
+    {
+        if (!array_key_exists('image', $data) || is_null($data['image'])) {
+            return null;
+        }
+
+        return Storage::disk('posts')->put('', $data['image']);
     }
 }

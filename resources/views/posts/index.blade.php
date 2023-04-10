@@ -5,3 +5,5 @@
         <li>{{ $post->title }} - {{ $post->created_at->format('d/m/Y') }}</li>
     @endforeach
 </ul>
+
+{{ $posts->links() }}

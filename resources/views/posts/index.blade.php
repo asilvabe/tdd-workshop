@@ -1,4 +1,4 @@
-<h1>Posts list</h1>
+<h1>{{ trans('posts.title') }}</h1>
 
 <ul>
     @foreach($posts as $post)

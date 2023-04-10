@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\StorePostAction;
 use App\Http\Requests\StorePostRequest;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +24,7 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request): RedirectResponse
     {
-        Post::create($request->validated());
+        StorePostAction::execute($request->validated());
 
         return to_route('posts.index')->with('success', 'Post created successfully!');
     }

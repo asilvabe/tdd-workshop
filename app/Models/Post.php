@@ -10,11 +10,6 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'title',
-        'content',
-    ];
-
     public function isApproved(): bool
     {
         return ! is_null($this->approved_at);

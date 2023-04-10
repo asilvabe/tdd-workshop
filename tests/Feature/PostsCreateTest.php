@@ -28,10 +28,7 @@ class PostsCreateTest extends TestCase
             ->assertViewIs('posts.create');
     }
 
-    /**
-     * @test
-     * @throws JsonException
-     */
+    /** @test */
     public function authenticated_users_can_create_posts(): void
     {
         $data = [
@@ -45,7 +42,7 @@ class PostsCreateTest extends TestCase
 
         $this
             ->post('/posts', $data)
-            ->assertSessionHasNoErrors()
+            ->assertSessionDoesntHaveErrors()
             ->assertRedirect();
 
         $this->assertDatabaseHas('posts', $data);

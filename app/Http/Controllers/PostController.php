@@ -23,10 +23,7 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request): RedirectResponse
     {
-        Post::create([
-            'title' => $request->input('title'),
-            'content' => $request->input('content'),
-        ]);
+        Post::create($request->validated());
 
         return to_route('posts.index')->with('success', 'Post created successfully!');
     }

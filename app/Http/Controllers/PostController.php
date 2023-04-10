@@ -23,6 +23,10 @@ class PostController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $request->validate([
+            'title' => 'required',
+        ]);
+
         Post::create([
             'title' => $request->input('title'),
             'content' => $request->input('content'),

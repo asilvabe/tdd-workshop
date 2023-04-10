@@ -82,12 +82,44 @@ class PostsCreateTest extends TestCase
         $this->assertFalse($post->isApproved());
     }
 
+    /** @test */
+    public function it_can_create_posts_trhough_an_artisan_command(): void
+    {
+        $post = [
+            'title' => 'My first post',
+            'content' => 'This is my first post',
+        ];
+
+        $this
+            ->artisan('app:create-post')
+            ->expectsQuestion('What is the title of the post?', $post['title'])
+            ->expectsQuestion('What is the content of the post?', $post['content'])
+            ->expectsOutput('Creating a new post...')
+            ->expectsOutput('Post created with ID: 1')
+            ->assertExitCode(0);
+
+        $this->assertDatabaseHas('posts', $post);
+    }
+
+    /** @test */
+    public function it_throws_an_error_when_creating_a_post_with_invalid_data(): void
+    {
+        $this
+            ->artisan('app:create-post')
+            ->expectsQuestion('What is the title of the post?', null)
+            ->expectsQuestion('What is the content of the post?', 'This is my first post')
+            ->expectsOutput('Creating a new post...')
+            ->expectsOutput('Error creating the post: The given data was invalid.')
+            ->assertExitCode(1);
+    }
+
     public function postsDataprovider(): array
     {
         return [
             'title is required' => [
                 'title',
                 [
+                    'title' => '',
                     'content' => 'This is my first post',
                 ],
             ],

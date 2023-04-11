@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Actions\StorePostAction;
 use App\Http\Requests\StorePostRequest;
+use App\Mail\PostApprovedMail;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -36,6 +38,8 @@ class PostController extends Controller
         }
 
         $post->approve();
+
+        Mail::to($post->author)->send(new PostApprovedMail());
 
         return to_route('posts.index')->with('success', 'Post approved successfully!');
     }

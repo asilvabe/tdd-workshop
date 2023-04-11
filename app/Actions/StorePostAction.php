@@ -19,6 +19,7 @@ class StorePostAction
         $post->title = $data['title'];
         $post->content = $data['content'];
         $post->image_path = self::storeImage($data);
+        $post->published_by = auth()->id();
 
         try {
             $post->save();

@@ -83,6 +83,8 @@ class PostsCreateTest extends TestCase
     /** @test */
     public function it_can_create_posts_trhough_an_artisan_command(): void
     {
+        User::factory()->admin()->create();
+
         $post = [
             'title' => 'My first post',
             'content' => 'This is my first post',

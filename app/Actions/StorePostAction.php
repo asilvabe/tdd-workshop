@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\Post;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
@@ -19,7 +20,7 @@ class StorePostAction
         $post->title = $data['title'];
         $post->content = $data['content'];
         $post->image_path = self::storeImage($data);
-        $post->published_by = auth()->id();
+        $post->published_by = self::getAuthorId();
 
         try {
             $post->save();
@@ -52,5 +53,14 @@ class StorePostAction
         }
 
         return Storage::disk('posts')->put('', $data['image']);
+    }
+
+    private static function getAuthorId(): int
+    {
+        if (auth()->check()) {
+            return auth()->id();
+        }
+
+        return User::admin()->first()?->id;
     }
 }

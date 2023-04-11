@@ -16,13 +16,6 @@ class Post extends Model
         return $this->belongsTo(User::class, 'published_by');
     }
 
-    public function approve(): void
-    {
-        $this->approved_at = now();
-
-        $this->save();
-    }
-
     public function isApproved(): bool
     {
         return ! is_null($this->approved_at);

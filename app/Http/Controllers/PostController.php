@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\ApprovePostAction;
 use App\Actions\StorePostAction;
 use App\Http\Requests\StorePostRequest;
-use App\Mail\PostApprovedMail;
 use App\Models\Post;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class PostController extends Controller
@@ -31,15 +31,14 @@ class PostController extends Controller
         return to_route('posts.index')->with('success', 'Post created successfully!');
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function approve(Post $post): RedirectResponse
     {
-        if (!auth()->user()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('approve', $post);
 
-        $post->approve();
-
-        Mail::to($post->author)->send(new PostApprovedMail());
+        ApprovePostAction::execute($post);
 
         return to_route('posts.index')->with('success', 'Post approved successfully!');
     }
